@@ -25,7 +25,7 @@ export const updateSeatType = createAsyncThunk<
   }
 });
 
-export const getSeatType = createAsyncThunk(
+export const getSeatType = createAsyncThunk<any>(
   "seatType/list",
   async (_, { rejectWithValue }) => {
     try {

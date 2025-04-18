@@ -1,13 +1,13 @@
 import { Button, Form, Input, message, Select } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../redux/hook";
-import { useState, useEffect,lazy } from "react";
+import { useState, useEffect, lazy } from "react";
 import {
   discountPercent,
   formatCurrency,
   formatDate,
   formatDateString,
   formatTime,
-  upperOrLowerText
+  upperOrLowerText,
 } from "../../../ultils";
 import { isFuture, isPast, parseISO } from "date-fns";
 import { banks } from "../../../ultils/data";
@@ -17,16 +17,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { updateData } from "../../../redux/slice/voucherSlice";
 import Swal from "sweetalert2";
 import { getCurrentUser } from "../../../redux/slice/AuthSlice";
-const PaymentStep = lazy(() => import("../../../components/client/PaymentStep")) ;
+const PaymentStep = lazy(
+  () => import("../../../components/client/PaymentStep")
+);
 const layout = {
   labelCol: { span: 12 },
   wrapperCol: { span: 12 },
 };
 
-type Props = {
-};
-const Payment = ({ }: Props) => {
-
+type Props = {};
+const Payment = ({}: Props) => {
   const { webConfigs } = useAppSelector((state: any) => state.WebConfigReducer);
   const [tempPrice, setTempPrice] = useState<any>();
   const [voucherMess, setVoucherMess] = useState<any>("");
@@ -40,26 +40,26 @@ const Payment = ({ }: Props) => {
   const [voucherApply, setVoucherApply] = useState<any>();
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { state } = useLocation();
   const [currentUser, setCurrentUser] = useState<any>();
-  const movieSelect = state?.movieSelect
+  const movieSelect = state?.movieSelect;
   document.title = "Payment";
   useEffect(() => {
-    let active = vouchers?.filter((item: any) => item?.status == 0)
-    setVoucherActive(active)
-  }, [vouchers])
+    let active = vouchers?.filter((item: any) => item?.status == 0);
+    setVoucherActive(active);
+  }, [vouchers]);
 
   useEffect(() => {
-      dispatch(getCurrentUser())
-        .unwrap()
-        .then((res: any) => {
-          setCurrentUser(res);
-        })
-        .catch((err: any) => {
-          console.log("No", err);
-        });
-    }, []);
+    dispatch(getCurrentUser())
+      .unwrap()
+      .then((res: any) => {
+        setCurrentUser(res);
+      })
+      .catch((err: any) => {
+        console.log("No", err);
+      });
+  }, []);
 
   useEffect(() => {
     if (state && movieSelect) {
@@ -68,7 +68,6 @@ const Payment = ({ }: Props) => {
       setTempPrice(state?.stateToNextStep?.finalPrice);
       setPriceAfterDiscount(state?.stateToNextStep?.finalPrice);
     }
-    
   }, [state, movieSelect]);
 
   useEffect(() => {
@@ -110,7 +109,7 @@ const Payment = ({ }: Props) => {
           `Voucher áp dụng từ ngày ${formatDate(item?.timeStart)}`
         );
       } else {
-        setVoucherApply(item)
+        setVoucherApply(item);
         let vcDiscount = item?.conditionNumber;
         let vcValue = item?.voucherVal; // tiền tối thiểu để giảm
         if (tempPrice < vcValue) {
@@ -156,7 +155,7 @@ const Payment = ({ }: Props) => {
       orderType: "billpayment",
       language: "",
       foodDetailId: state?.foodDetailId,
-      voucherId: voucherApply
+      voucherId: voucherApply,
     };
 
     Swal.fire({
@@ -169,20 +168,23 @@ const Payment = ({ }: Props) => {
       confirmButtonText: "Yes",
     }).then((result: any) => {
       if (result.isConfirmed) {
-        dispatch(createPaymeny(payload)).unwrap()
+        dispatch(createPaymeny(payload))
+          .unwrap()
           .then((res: any) => {
             if (voucherApply) {
               let voucherChange = {
                 _id: voucherApply?._id,
                 quantity: voucherApply?.quantity - 1,
-                userId: [...voucherApply?.userId, currentUser?._id]
-              }
-              dispatch(updateData(voucherChange)).unwrap()
-                .then(() => { window.location.href = `${res}` })
-                .catch((err: any) => message.error(err.message))
-            }
-            else {
-              window.location.href = `${res}`
+                userId: [...voucherApply?.userId, currentUser?._id],
+              };
+              dispatch(updateData(voucherChange))
+                .unwrap()
+                .then(() => {
+                  window.location.href = `${res}`;
+                })
+                .catch((err: any) => message.error(err.message));
+            } else {
+              window.location.href = `${res}`;
             }
           })
           .catch((err: any) => message.error(`${err}`));
@@ -190,8 +192,8 @@ const Payment = ({ }: Props) => {
     });
   };
   const backStep = () => {
-    navigate("/combo", { state: state })
-  }
+    navigate("/combo", { state: state });
+  };
   const ButtonBack = () => {
     return (
       <Button
@@ -208,8 +210,8 @@ const Payment = ({ }: Props) => {
       >
         Quay lại
       </Button>
-    )
-  }
+    );
+  };
   const childrenComp = () => {
     return (
       <div className="bg-[#ffffff] h-[550px] max-h-[550px]  w-[98%] max-w-[98%] p-5 ml-2">
@@ -284,18 +286,17 @@ const Payment = ({ }: Props) => {
               các Quy Định Giao Dịch Trực Tuyến của {webConfigs[0]?.storeName}.
             </p>
 
-            <div className="flex">
-              <ButtonBack />
+            <div className="">
+              {/* <ButtonBack /> */}
               <Button
                 style={{
-                  width: "47%",
-                  marginLeft: "17px",
+                  width: "100%",
                   backgroundColor: "#f6710d",
                   border: "none",
+                  borderRadius: "20px",
                 }}
                 type="primary"
                 htmlType="submit"
-                className="hover: text-red-600"
               >
                 Thanh toán
               </Button>
@@ -374,7 +375,7 @@ const Payment = ({ }: Props) => {
 
   return (
     <PaymentStep
-      ticket={state?.ticket}
+      ticket={state?.stateToNextStep?.ticket}
       children={childrenComp()}
       nextStep={null}
       rightContent={rightContent()}

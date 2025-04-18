@@ -7,6 +7,7 @@ import { getOneSBSTById } from "../../../redux/slice/SeatBySTSlice";
 import { getAlSt } from "../../../redux/slice/ShowTimeSlice";
 import { formatDate, formatTime } from "../../../ultils";
 import "./BookChair.scss";
+import { getSeatType } from "../../../redux/slice/SeatTypeSlice";
 type Props = {};
 
 const BookChair = (props: Props) => {
@@ -21,10 +22,14 @@ const BookChair = (props: Props) => {
   const [seatFile, setSeatFile] = useState<any>();
   const { rooms } = useAppSelector((state) => state.roomReducer);
   const { stList } = useAppSelector((state) => state.ShowTimeReducer);
-  const { seatType } = useAppSelector((state) => state.seatTypeReducer);
   const showtime = stList.find((item: any) => item._id === idShowtime);
   const roomSelect = rooms?.find((item: any) => item?._id === idRoom);
+  const [seatType, setSeatType] = useState<any>();
   useEffect(() => {
+    dispatch(getSeatType()).unwrap()
+      .then((res: any) => {
+        setSeatType(res);
+      })
     dispatch(getAlSt({}));
     dispatch(getRooms());
     (async () => {
@@ -44,8 +49,8 @@ const BookChair = (props: Props) => {
     <>
       <div className="container">
         {/* chair */}
-        <div className="mt-5 grid grid-cols-[900px,300px] gap-10 ">
-          <div className="border border-[#ccc] rounded-md ">
+        <div className="grid grid-cols-[900px,300px] gap-10 mt-24">
+          <div className="border border-[#ccc] rounded-md mt-16">
             <div className="bg-[#182b47] h-[50px] flex gap-3 text-white p-2 justify-between items-center uppercase font-bold">
               <p> Tên phim :{showtime?.movieId?.name} </p>
               <p>  Phòng chiếu :{roomSelect?.name} -  {roomSelect?.formatId?.name}</p>
@@ -103,6 +108,7 @@ const BookChair = (props: Props) => {
                 <p className="w-5 h-5 bg-red-700"></p>
                 <span className="text-white pl-2"> Ghế Đã Bán</span>
               </div>
+
             </div>
           </div>
           <div className="h-[598px] bg-[url(https://chieuphimquocgia.com.vn/Themes/RapChieuPhim/Content/content.v2/images/bg04.png)]">

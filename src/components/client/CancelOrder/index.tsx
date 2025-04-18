@@ -6,15 +6,16 @@ type Props = { }
 const CancelOrder = (props: Props) => {
   const { state } = useLocation();
   const [info, setInfo] = useState<any>()
+  console.log("🚀 ~ CancelOrder ~ info:", info)
 
   useEffect(() => {
     document.title = "SUNCINEMA";
     if (state) {
-      setInfo(state?.populatedDetail[0])
+      setInfo(state?.stateToNextStep?.populatedDetail[0])
     }
   }, [state])
   return (
-    <div className="flex flex-row justify-center mt-16 ">
+    <div className="flex flex-row justify-center mt-24">
       <div className="w-[55%]">
         <div className="bg-[#f6710d] h-[550px] ">
           <div className="flex items-center justify-between p-2">

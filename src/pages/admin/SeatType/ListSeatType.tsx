@@ -1,18 +1,31 @@
-import { lazy } from "react"
+import { lazy, useEffect, useState } from "react";
 import { Space, Button } from "antd";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../redux/hook";
 import { EditOutlined } from "@ant-design/icons";
-const DataTable = lazy(() => import("../../../components/admin/Form&Table/Table"));
+const DataTable = lazy(
+  () => import("../../../components/admin/Form&Table/Table")
+);
 import configRoute from "../../../config";
+import { getSeatType } from "../../../redux/slice/SeatTypeSlice";
 type Props = {};
 
 const ListSeatType = (props: Props) => {
   const dispatch = useAppDispatch();
-  const { seatType, isErr, isFetching, isSucess } = useAppSelector(
-    (state) => state.seatTypeReducer
-  );
-
+  const [seatType, setSeatType] = useState<any>();
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    dispatch(getSeatType()).unwrap()
+      .then((res: any) => {
+        setSeatType(res);
+      })
+      .catch((e:any)=>{
+        console.log(e);
+        
+      })
+      .finally(() => setLoading(false));
+  }, []);
   const columnList: any = [
     {
       title: "Tên loại ghế",
@@ -72,7 +85,7 @@ const ListSeatType = (props: Props) => {
           <Link to={configRoute.routes.adminRooms}>Quản lí phòng chiếu</Link>
         </Button>
       </div>
-      <DataTable column={columnList} data={data} loading={isFetching} />
+      <DataTable column={columnList} data={data} loading={loading} />
     </>
   );
 };

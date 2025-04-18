@@ -14,6 +14,7 @@ interface Props {
 const Row = ({ title, fetchURL, rowID }: Props) => {
     const dispatch = useAppDispatch()
     const [data, setData] = useState([]);
+    console.log("🚀 ~ Row ~ data:", data)
 
     useEffect(() => {
         (async () => {
