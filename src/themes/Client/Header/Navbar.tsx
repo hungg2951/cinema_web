@@ -4,13 +4,15 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getConfigs } from '../../../redux/slice/webConfig';
 import { Dropdown, MenuProps, Space , Drawer, Button} from 'antd';
 import { MdOutlineControlCamera, MdNotificationsNone, MdSearch, MdOutlineSettings, MdOutlineLogout, MdOutlineLoop } from "react-icons/md"
+import { getCurrentUser } from '../../../redux/slice/AuthSlice';
 
 const Navbar = () => {
   const dispatch = useAppDispatch()
   useEffect(() => { dispatch(getConfigs()) }, []);
   const { webConfigs } = useAppSelector(state => state.WebConfigReducer);
-  const { currentUser } = useAppSelector(state => state.authReducer);
   const [open, setOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>();
+
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -37,7 +39,12 @@ const Navbar = () => {
     }
     items.splice(2, 0, adminNav);
   }
+ useEffect(() => {
+   dispatch(getCurrentUser()).unwrap()
+   .then((res:any)=>{
 
+   })
+ }, []);
   return (
     <div className='w-full absolute flex justify-between top-0 items-center p-4 z-[100] sm:w-full '>
       <div className="w-[120px] max-w-[120px]"> <Link to="/"><img className='object-cover p-4' src={`${webConfigs?.[0]?.logo?.[0]?.url} ` || "https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg"} alt="" /></Link></div>

@@ -27,8 +27,7 @@ export const authAsyncLogin = createAsyncThunk<
     return rejectWithValue(error.response.data);
   }
 });
-export const getCurrentUser = createAsyncThunk<
-  any, any, { rejectValue: string }>("auth/getCurrentUser", async (_: any, { rejectWithValue }) => {
+export const getCurrentUser = createAsyncThunk<any>("auth/getCurrentUser", async (_: any, { rejectWithValue }) => {
     try {
       const { data } = await AuthApi.getCurrentUser();
       return data;

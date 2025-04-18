@@ -28,6 +28,7 @@ const Payment = ({ }: Props) => {
 
   const { webConfigs } = useAppSelector((state: any) => state.WebConfigReducer);
   const { currentUser } = useAppSelector((state: any) => state.authReducer);
+  console.log("🚀 ~ Payment ~ currentUser:", currentUser)
   const [tempPrice, setTempPrice] = useState<any>();
   const [voucherMess, setVoucherMess] = useState<any>("");
   const [voucherMess2, setVoucherMess2] = useState<any>("");
@@ -305,7 +306,7 @@ const Payment = ({ }: Props) => {
         <h1 className="font-bold uppercase px-4 pt-2">{movieSelect?.name}</h1>
         {info && (
           <>
-            <ul className="px-4 py-3">
+            <ul className="px-4 py-3 text-black">
               <li className="border-b-2 border-dotted border-black leading-10">
                 <b>Rạp</b>: {webConfigs[0]?.storeName} |
                 {info && <>{info[0]?.seatId?.roomId?.name}</>}
