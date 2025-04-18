@@ -10,9 +10,7 @@ const Home = (props: Props) => {
     <>
       <Header />
       <Row rowID='1' rateSpin={true} title="Phim đang chiếu" fetchURL={getMovie} />
-      <Row rowID='2' rateSpin={true} title="Phim đang chiếu" fetchURL={getMovie} />
-      <Row rowID='3' rateSpin={true} title="Phim đang chiếu" fetchURL={getMovie} />
-
+      {/* dưới đây  */}
       <Hero />
 
 
