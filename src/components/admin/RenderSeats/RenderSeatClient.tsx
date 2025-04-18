@@ -23,7 +23,7 @@ type Props = {
   userId?: any;
   adminPreview?: any
 };
-export const RenderInfoSeats = ({ roomId }: Props) => {
+export const RenderInfoSeats = ({ roomId,showtime }: Props) => {
   const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { arrSeats } = useAppSelector((state) => state.SeatsReducer);
@@ -54,7 +54,7 @@ export const RenderInfoSeats = ({ roomId }: Props) => {
       .unwrap()
       .then((payload: any) => {
         //@ts-ignore
-        navigate("/combo", { state: payload });
+        navigate("/combo", { state: {...payload,showtime:showtime} });
         dispatch(removeArrSeats());
       })
       .catch((err: any) => {

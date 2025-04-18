@@ -5,46 +5,45 @@ import { formatCurrency, formatDateString, formatTime } from "../../../ultils";
 import { useLocation, useNavigate } from "react-router-dom";
 import PaymentStep from "../PaymentStep";
 import { createFD } from "../../../redux/slice/FoodDetail";
+import { getFood } from "../../../redux/slice/FoodSlice";
 
 type Props = {
   updateFieldsFood: any;
 };
 const ChooseCombo = ({ updateFieldsFood }: Props) => {
-  
+
   const deadline = Date.now() + 1000 * 60 * 10;
-  const { food } = useAppSelector((state) => state.food);
-  let foodActive = food?.filter((item: any) => item?.status == 0);
   const [initLoading, setInitLoading] = useState(true);
   const [list, setList] = useState<any[]>([]);
   const { webConfigs } = useAppSelector((state: any) => state.WebConfigReducer);
   const [tempPrice, setTempPrice] = useState<any>();
   const [info, setInfo] = useState<any>();
-  const { movie } = useAppSelector((state) => state.movie);
   const { state } = useLocation();
-  console.log("🚀 ~ ChooseCombo ~ state:", state)
+  const movieSelect = state?.showtime?.movieId;
   const [foodOrder, setFoodOrder] = useState<any[]>([]);
   const [foodPrice, setFoodPrice] = useState<any>(0);
   const [cart, setCart] = useState<any[]>([]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  let movieSelect = movie?.find(
-    (item: any) => item?._id === state?.populatedDetail[0]?.showTimeId?.movieId
-  );
 
+  //get all food
   useEffect(() => {
     document.title = "Choose Combo";
-    if (foodActive) {
-      setInitLoading(false);
-      setList(foodActive);
-    }
-  }, [food]);
+    dispatch(getFood())
+      .unwrap()
+      .then((res: any) => {
+        setInitLoading(false);
+        setList(res?.filter((item: any) => item?.status == 0));
+      });
+  }, []);
 
   useEffect(() => {
-    if (state && movieSelect) {
+    console.log("🚀 ~ ChooseCombo ~ state:", state);
+    if (state) {
       setInfo(state?.populatedDetail);
       setTempPrice(state?.ticket?.totalPrice);
     }
-  }, [state, movieSelect]);
+  }, [state]);
 
   useEffect(() => {
     if (foodOrder) {
@@ -111,9 +110,9 @@ const ChooseCombo = ({ updateFieldsFood }: Props) => {
                 <List.Item.Meta
                   avatar={<Avatar src={item?.image[0]?.url} />}
                   title={<b className="uppercase">{item?.name}</b>}
-                  description={`stock: ${item?.stock > 0 ? item?.stock : "Đã hết"} , price: ${formatCurrency(
-                    item?.price
-                  )}`}
+                  description={`stock: ${
+                    item?.stock > 0 ? item?.stock : "Đã hết"
+                  } , price: ${formatCurrency(item?.price)}`}
                 />
                 <InputNumber
                   min={0}
@@ -140,7 +139,7 @@ const ChooseCombo = ({ updateFieldsFood }: Props) => {
         <h1 className="font-bold uppercase px-4 pt-2">{movieSelect?.name}</h1>
         {info && (
           <>
-            <ul className="px-4 py-3">
+            <ul className="px-4 py-3 text-black">
               <li className="border-b-2 border-dotted border-black leading-10">
                 <b>Rạp</b>: {webConfigs[0]?.storeName} |
                 {info && <>{info[0]?.seatId?.roomId?.name}</>}
