@@ -11,7 +11,6 @@ type Props = {
   updateFieldsFood: any;
 };
 const ChooseCombo = ({ updateFieldsFood }: Props) => {
-
   const deadline = Date.now() + 1000 * 60 * 10;
   const [initLoading, setInitLoading] = useState(true);
   const [list, setList] = useState<any[]>([]);
@@ -28,7 +27,6 @@ const ChooseCombo = ({ updateFieldsFood }: Props) => {
 
   //get all food
   useEffect(() => {
-    document.title = "Choose Combo";
     dispatch(getFood())
       .unwrap()
       .then((res: any) => {
@@ -46,6 +44,7 @@ const ChooseCombo = ({ updateFieldsFood }: Props) => {
   }, [state]);
 
   useEffect(() => {
+    document.title = "Choose Combo";
     if (foodOrder) {
       const totalPrice = foodOrder.reduce((total, currentValue) => {
         return total + currentValue.price;
@@ -92,7 +91,7 @@ const ChooseCombo = ({ updateFieldsFood }: Props) => {
           foodDetailId: data?._id,
           foodDetail: foodOrder,
         };
-        navigate("/payment", { state: stateToNextStep });
+        navigate("/payment", { state: { stateToNextStep, movieSelect } });
       });
   };
 

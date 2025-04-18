@@ -16,6 +16,7 @@ import { createPaymeny } from "../../../redux/slice/OrdersSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateData } from "../../../redux/slice/voucherSlice";
 import Swal from "sweetalert2";
+import { getCurrentUser } from "../../../redux/slice/AuthSlice";
 const PaymentStep = lazy(() => import("../../../components/client/PaymentStep")) ;
 const layout = {
   labelCol: { span: 12 },
@@ -27,8 +28,6 @@ type Props = {
 const Payment = ({ }: Props) => {
 
   const { webConfigs } = useAppSelector((state: any) => state.WebConfigReducer);
-  const { currentUser } = useAppSelector((state: any) => state.authReducer);
-  console.log("🚀 ~ Payment ~ currentUser:", currentUser)
   const [tempPrice, setTempPrice] = useState<any>();
   const [voucherMess, setVoucherMess] = useState<any>("");
   const [voucherMess2, setVoucherMess2] = useState<any>("");
@@ -41,26 +40,35 @@ const Payment = ({ }: Props) => {
   const [voucherApply, setVoucherApply] = useState<any>();
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
-  const { movie } = useAppSelector((state: any) => state.movie);
   const navigate = useNavigate()
   const { state } = useLocation();
-
-  let movieSelect = movie?.find(
-    (item: any) => item?._id === state?.populatedDetail[0]?.showTimeId?.movieId
-  );
+  const [currentUser, setCurrentUser] = useState<any>();
+  const movieSelect = state?.movieSelect
+  document.title = "Payment";
   useEffect(() => {
     let active = vouchers?.filter((item: any) => item?.status == 0)
     setVoucherActive(active)
   }, [vouchers])
 
   useEffect(() => {
+      dispatch(getCurrentUser())
+        .unwrap()
+        .then((res: any) => {
+          setCurrentUser(res);
+        })
+        .catch((err: any) => {
+          console.log("No", err);
+        });
+    }, []);
+
+  useEffect(() => {
     if (state && movieSelect) {
-      setInfo(state?.populatedDetail);
-      setData(state?.ticket);
-      setTempPrice(state?.finalPrice);
-      setPriceAfterDiscount(state?.finalPrice);
+      setInfo(state?.stateToNextStep?.populatedDetail);
+      setData(state?.stateToNextStep?.ticket);
+      setTempPrice(state?.stateToNextStep?.finalPrice);
+      setPriceAfterDiscount(state?.stateToNextStep?.finalPrice);
     }
-    document.title = "Payment";
+    
   }, [state, movieSelect]);
 
   useEffect(() => {
@@ -71,7 +79,7 @@ const Payment = ({ }: Props) => {
       paymentType: "",
       voucherCode: "",
     });
-  }, []);
+  }, [currentUser]);
 
   const checkCode = (codeVal: any, e: Event) => {
     e.preventDefault();
@@ -318,7 +326,7 @@ const Payment = ({ }: Props) => {
               </li>
               <li className="border-b-2 border-dotted border-black leading-10">
                 <b>Combo</b>:
-                {state?.foodDetail?.map((item: any) => (
+                {state?.stateToNextStep?.foodDetail?.map((item: any) => (
                   <span key={item?.foodId?._id}>
                     {item?.foodId?.name}({item?.quantity})
                   </span>
