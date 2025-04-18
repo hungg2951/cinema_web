@@ -2,11 +2,11 @@ import axios from "axios";
 
 let accessToken;
 try {
-  const root = JSON.parse(localStorage.getItem("persist:root") || "");
-  const user = JSON.parse(root.authReducer);
-  if (user) accessToken = user.accessToken;
+  const root = JSON.parse(localStorage.getItem("persist:root") || "{}");
+  const user = JSON.parse(root.authReducer || "{}");
+  if (user && user.accessToken) accessToken = user.accessToken;
 } catch (error) {
-  console.log(error);
+  console.log("Error parsing localStorage:", error);
 }
 
 const axiosClient = axios.create({

@@ -11,7 +11,7 @@ const LoadingPushAccountInLocalStorage = (props: Props) => {
 
    const dispatch = useAppDispatch();
    const navigate = useNavigate();
-   dispatch(getCurrentUser({})).unwrap()
+   dispatch(getCurrentUser()).unwrap()
       .then((payload: any) => {
          message.success("Đăng Nhập thành công")
          navigate('/')

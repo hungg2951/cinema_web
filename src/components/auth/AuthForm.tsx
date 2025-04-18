@@ -59,7 +59,9 @@ const AuthForm = ({ onFinish, form, name, isSignUp, sign }: Props) => {
                   </Form.Item>
                )}
                <Form.Item>
-                  <button className="bg-[#D9A953] w-full p-1 rounded-md text-[#6f511d] font-bold uppercase ">Save</button>
+                  <button className="bg-[#D9A953] w-full p-1 rounded-md text-[#6f511d] font-bold uppercase ">
+                     {isSignUp ? "Đăng Nhập" : "Đăng Ký"}
+                  </button>
                </Form.Item>
             </Form>
          </div>

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AuthApi } from "../../service/authApi";
+import { jwtDecode } from "jwt-decode";
 
 // thunk :
 export const authAsyncRegister = createAsyncThunk<
@@ -27,14 +28,36 @@ export const authAsyncLogin = createAsyncThunk<
     return rejectWithValue(error.response.data);
   }
 });
-export const getCurrentUser = createAsyncThunk<any>("auth/getCurrentUser", async (_: any, { rejectWithValue }) => {
+
+export const getCurrentUser = createAsyncThunk<any>(
+  "auth/getCurrentUser",
+  async (_: any, { rejectWithValue }) => {
     try {
-      const { data } = await AuthApi.getCurrentUser();
-      return data;
+      const root = localStorage.getItem("persist:root");
+      if (!root) throw new Error("No persist:root found");
+
+      const parsedRoot = JSON.parse(root);
+
+      if (!parsedRoot.authReducer) {
+        throw new Error("authReducer not found in persist:root");
+      }
+
+      const authReducer = JSON.parse(parsedRoot.authReducer);
+
+      if (!authReducer.accessToken) {
+        throw new Error("accessToken not found");
+      }
+
+      const decoded = jwtDecode(authReducer.accessToken);
+
+      return decoded;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(
+        error?.response?.data || error.message || "Unknown error"
+      );
     }
-  });
+  }
+);
 
 //slice
 type AuthState = {
@@ -53,10 +76,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    LogOut(state) {
-      (state.currentUser = {}),
-        (state.accessToken = ""),
-        (state.isLogged = false);
+    LogOut() {
+    localStorage.removeItem("persist:root");
+    localStorage.removeItem("accessToken");
     },
   },
   extraReducers(builder) {
@@ -65,11 +87,11 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.currentUser = action.payload.user;
     });
-    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
-      state.isLogged = true;
-      state.accessToken = action.payload.accessToken;
-      state.currentUser = action.payload.user;
-    });
+    // builder.addCase(getCurrentUser.fulfilled, (state, action) => {
+    //   state.isLogged = true;
+    //   state.accessToken = action.payload.accessToken;
+    //   state.currentUser = action.payload.user;
+    // });
   },
 });
 
